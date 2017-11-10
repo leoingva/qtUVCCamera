@@ -87,8 +87,7 @@ int main(int argc, char *argv[])
       }
       puts("UVC initialized");
       /* Locates the first attached UVC device, stores in dev */
-//      res = uvc_find_device(ctx, &dev, 0, 0, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
-      res = uvc_find_device2(ctx, &dev, 0, 0, NULL,0);
+      res = uvc_find_device(ctx, &dev, 0, 0, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
       if (res < 0) {
         uvc_perror(res, "uvc_find_device"); /* no devices found */
       } else {
