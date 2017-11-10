@@ -160,20 +160,16 @@ HEADERS += \
     libuvc/libuvc/libuvc_config.h \
     libuvc/libuvc/libuvc_config.h.in \
     libuvc/libuvc/libuvc_internal.h \
-    libuvc/libuvc/libuvc_internal_original.h \
     libuvc/libuvc/libuvc_original.h \
     libusb/os/poll_posix.h \
     libusb/os/threads_posix.h \
     libusb/config.h \
     libusb/hotplug.h \
     libusb/libusb.h \
-    libusb/libusb_original.h \
     libusb/libusbi.h \
-    libusb/libusbi_original.h \
     libusb/localdefines.h \
     libusb/utilbase.h \
     libusb/version.h \
-    libusb/version_nano.h \
     libusb/os/android_usbfs.h
 
 CONFIG += mobility
@@ -181,3 +177,14 @@ MOBILITY =
 INCLUDEPATH += $$PWD/libuvc
 INCLUDEPATH += $$PWD/libusb
 INCLUDEPATH += $$PWD/libjpeg
+
+DISTFILES += \
+    android/AndroidManifest.xml \
+    android/gradle/wrapper/gradle-wrapper.jar \
+    android/gradlew \
+    android/res/values/libs.xml \
+    android/build.gradle \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew.bat
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

@@ -664,6 +664,9 @@ static int android_scan_devices(struct libusb_context *ctx) {
 
 #ifdef __ANDROID__
 	// do nothing
+    usbi_mutex_static_lock(&android_hotplug_lock);
+    ret = android_default_scan_devices(ctx);
+    usbi_mutex_static_unlock(&android_hotplug_lock);
 #else
 	usbi_mutex_static_lock(&android_hotplug_lock);
 

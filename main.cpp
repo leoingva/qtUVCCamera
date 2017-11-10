@@ -57,20 +57,20 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    libusb_device **devs;
-    ssize_t cnt;
-    int r, i;
+//    libusb_device **devs;
+//    ssize_t cnt;
+//    int r, i;
 
-    if (argc > 1 && !strcmp(argv[1], "-v"))
-        verbose = 1;
+//    if (argc > 1 && !strcmp(argv[1], "-v"))
+//        verbose = 1;
 
-    r = libusb_init(NULL);
-    if (r < 0)
-        return r;
+//    r = libusb_init(NULL);
+//    if (r < 0)
+//        return r;
 
-    cnt = libusb_get_device_list(NULL, &devs);
-qDebug()<<"No. of devices: "<<cnt;
-return a.exec();
+//    cnt = libusb_get_device_list(NULL, &devs);
+//qDebug()<<"No. of devices: "<<cnt;
+//return a.exec();
 
     uvc_context_t *ctx;
       uvc_device_t *dev;
@@ -87,9 +87,8 @@ return a.exec();
       }
       puts("UVC initialized");
       /* Locates the first attached UVC device, stores in dev */
-      res = uvc_find_device(
-          ctx, &dev,
-          0, 0, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
+//      res = uvc_find_device(ctx, &dev, 0, 0, NULL); /* filter devices: vendor_id, product_id, "serial_num" */
+      res = uvc_find_device2(ctx, &dev, 0, 0, NULL,0);
       if (res < 0) {
         uvc_perror(res, "uvc_find_device"); /* no devices found */
       } else {
