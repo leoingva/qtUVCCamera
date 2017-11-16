@@ -6,6 +6,52 @@
 #include<QImage>
 #include <QMutex>
 #include <QPainter>
+
+
+#include <QAndroidJniObject>
+#include <QAndroidJniEnvironment>
+#include <QDebug>
+#include <QString>
+#include "jni.h"
+#include <QDir>
+#include <QProcess>
+#include <QtAndroid>
+#include <QStandardPaths>
+#include <QAndroidJniObject>
+#include <QString>
+const static char* MY_JAVA_CLASS = "GetPermission";
+int InstallApp(const QString &appPackageName) {
+        QAndroidJniObject jsText = QAndroidJniObject::fromString(appPackageName);
+        return QAndroidJniObject::callStaticMethod<jint>(MY_JAVA_CLASS,
+                                           "installApp",
+                                           "(Ljava/lang/String;)I",
+                                           jsText.object<jstring>());
+}
+int  getPermission(int vid, int pid) {
+    int ret = 0;
+        QAndroidJniObject activity = QtAndroid::androidActivity();
+        QAndroidJniObject serviceName = QAndroidJniObject::getStaticObjectField<jstring>("android/content/Context","USB_SERVICE");
+        QAndroidJniObject usbManager = activity.callObjectMethod("getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;", serviceName.object<jobject>());
+        if ( usbManager.isValid() ){
+            qDebug()<<"usb manager got";
+            ret = QAndroidJniObject::callStaticMethod<jint>(MY_JAVA_CLASS,
+                                                      "checkDevices",
+                                                      "(Landroid/hardware/usb/UsbManager;Landroid/content/Context;)I",
+                                                      usbManager.object<jobject>(),activity.object());
+        }else
+        {
+            qDebug()<<"usb manager error";
+            ret = -1;
+        }
+//    QAndroidJniObject activity = QAndroidJniObject(MY_JAVA_CLASS,
+//                                                   "()V");
+//    if (activity.isValid()) {
+//        return activity.callMethod<jint>("checkForDevices","()I");
+//    }
+    return ret;
+}
+
+
 QImage img;
 QMutex mutex;
 QWidget *w;
@@ -46,7 +92,7 @@ w->update();
 
   uvc_free_frame(rgb);
 }
-uvc_error_t uvc_setup(){
+uvc_error_t uvc_start(){
       uvc_context_t *ctx;
       uvc_device_t *dev;
       uvc_device_handle_t *devh;
@@ -67,6 +113,14 @@ uvc_error_t uvc_setup(){
         uvc_perror(res, "uvc_find_device"); /* no devices found */
       } else {
         puts("Device found");
+        uvc_device_descriptor_t *desc;
+        if (uvc_get_device_descriptor(dev, &desc) == UVC_SUCCESS)
+        {
+            qDebug()<<desc->idVendor;
+                    qDebug()<<desc->idProduct;
+getPermission(desc->idVendor,desc->idProduct);
+        }
+
         /* Try to open the device: requires exclusive access */
         res = uvc_open(dev, &devh);
         if (res < 0) {
@@ -119,8 +173,15 @@ uvc_error_t uvc_setup(){
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
 {
-    w = this;
-    uvc_setup();
+
+
+    int ret = InstallApp("asdf");
+    qDebug()<<ret;
+//    ret = getPermission();
+    qDebug()<<ret;
+
+    //    w = this;
+    uvc_start();
 }
 
 Widget::~Widget()

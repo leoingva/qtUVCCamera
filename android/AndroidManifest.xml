@@ -5,6 +5,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
             </intent-filter>
 
             <!-- Application arguments -->
@@ -57,12 +58,13 @@
                 -->
             <meta-data android:name="android.app.extract_android_style" android:value="full"/>
             <!-- extract android style -->
+            <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter"/>
     </activity>
 
     <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
 
     </application>
-
+    <uses-feature android:name="android.hardware.usb.host"/>
     <uses-sdk android:minSdkVersion="19" android:targetSdkVersion="19"/>
     <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
 

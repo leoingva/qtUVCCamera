@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui androidextras
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -77,6 +77,6 @@ DISTFILES += \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat \
-    android/src/getPermission.java
+    android/src/GetPermission.java
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
