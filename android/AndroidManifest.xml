@@ -61,6 +61,15 @@
             <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter"/>
     </activity>
 
+<activity android:name=".GetPermission"
+          android:parentActivityName="org.qtproject.qt5.android.bindings.QtActivity" >
+
+    <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value="org.qtproject.qt5.android.bindings.QtActivity" />
+</activity>
+
+
     <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
 
     </application>

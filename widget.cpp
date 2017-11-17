@@ -30,24 +30,24 @@ int InstallApp(const QString &appPackageName) {
 int  getPermission(int vid, int pid) {
     int ret = 0;
         QAndroidJniObject activity = QtAndroid::androidActivity();
-        QAndroidJniObject serviceName = QAndroidJniObject::getStaticObjectField<jstring>("android/content/Context","USB_SERVICE");
-        QAndroidJniObject usbManager = activity.callObjectMethod("getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;", serviceName.object<jobject>());
-        if ( usbManager.isValid() ){
-            qDebug()<<"usb manager got";
-            ret = QAndroidJniObject::callStaticMethod<jint>(MY_JAVA_CLASS,
-                                                      "checkDevices",
-                                                      "(Landroid/hardware/usb/UsbManager;Landroid/content/Context;)I",
-                                                      usbManager.object<jobject>(),activity.object());
-        }else
-        {
-            qDebug()<<"usb manager error";
-            ret = -1;
-        }
-//    QAndroidJniObject activity = QAndroidJniObject(MY_JAVA_CLASS,
-//                                                   "()V");
-//    if (activity.isValid()) {
-//        return activity.callMethod<jint>("checkForDevices","()I");
-//    }
+//        if (activity.isValid()) {
+//            return activity.callMethod<jint>("checkForDevices","(II)I",vid,pid);
+//        }
+//        QAndroidJniObject activity = QtAndroid::androidActivity();
+//        QAndroidJniObject serviceName = QAndroidJniObject::getStaticObjectField<jstring>("android/content/Context","USB_SERVICE");
+//        QAndroidJniObject usbManager = activity.callObjectMethod("getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;", serviceName.object<jobject>());
+//        if ( usbManager.isValid() ){
+//            qDebug()<<"usb manager got";
+
+            ret = QAndroidJniObject::callStaticMethod<jint>(MY_JAVA_CLASS, "newClass","(Landroid/app/Activity;)I",activity.object());
+            ret = QAndroidJniObject::callStaticMethod<jint>(MY_JAVA_CLASS, "checkForDevices","(II)I",vid,pid);
+//                                                      "(Landroid/hardware/usb/UsbManager;Landroid/content/Context;)I",
+//                                                        usbManager.object<jobject>(),activity.object());
+//        }else
+//        {
+//            qDebug()<<"usb manager error";
+//            ret = -1;
+//        }
     return ret;
 }
 
@@ -117,10 +117,10 @@ uvc_error_t uvc_start(){
         if (uvc_get_device_descriptor(dev, &desc) == UVC_SUCCESS)
         {
             qDebug()<<desc->idVendor;
-                    qDebug()<<desc->idProduct;
-getPermission(desc->idVendor,desc->idProduct);
+            qDebug()<<desc->idProduct;
+            getPermission(desc->idVendor,desc->idProduct);
         }
-
+        return res;
         /* Try to open the device: requires exclusive access */
         res = uvc_open(dev, &devh);
         if (res < 0) {
