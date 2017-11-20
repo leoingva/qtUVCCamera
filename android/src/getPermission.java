@@ -43,7 +43,7 @@ public class GetPermission extends QtActivity
     private static String TAG = "TAG";
     private static final String ACTION_USB_PERMISSION = "org.qtproject.example.USB_PERMISSION";
     private static PendingIntent mPermissionIntent;
-    private static UsbManager m_usbManager;
+//    private static UsbManager m_usbManager;
     private static UsbDeviceConnection connection;
 //    private static HashMap<Integer, Integer> connectedDevices;
     private static HashMap<String, Integer> deviceCache = new HashMap<String, Integer>();
@@ -96,23 +96,23 @@ public class GetPermission extends QtActivity
     {
         super.onDestroy();
     }
-private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
-    public void onReceive(Context context, Intent intent) {
-        res = true;
-        Log.d("RET", "in receive callback");
-        String action = intent.getAction();
-        if (ACTION_USB_PERMISSION.equals(action)) {
-            synchronized (this) {
-                UsbDevice device = (UsbDevice)intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                    if(device != null){
-                        m_instance.openDevice(device);
-                   }
-                }
-            }
-        }
-    }
-};
+//private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+//    public void onReceive(Context context, Intent intent) {
+//        res = true;
+//        Log.d("RET", "in receive callback");
+//        String action = intent.getAction();
+//        if (ACTION_USB_PERMISSION.equals(action)) {
+//            synchronized (this) {
+//                UsbDevice device = (UsbDevice)intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+//                if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+//                    if(device != null){
+//                        m_instance.openDevice(device);
+//                   }
+//                }
+//            }
+//        }
+//    }
+//};
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data)
 //    {
@@ -207,21 +207,24 @@ private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
 
 //        return connection.getFileDescriptor();
 //    }
-    public void openDevice(UsbDevice device)
+    public static void openDevice(UsbManager m_usbManager,UsbDevice device)
     {
-        Log.d("TAG","in open device");
-    //    try {
+        try {
+            Log.e("try","jinlailema");
 //            if (!res) return;
             UsbDeviceConnection devConn = m_usbManager.openDevice(device);
+            Log.d("devConn = ",devConn.toString());
             fd = devConn.getFileDescriptor();
             Log.d("TAG","fd = " + fd);
 
-    //        deviceCache.put(device.getDeviceName(), ifd);
+//            deviceCache.put(device.getDeviceName(), fd);
 
-    //    }
-    //    catch (InterruptedException e) {
-    //            return;
-    //    }
+        }
+        catch (Exception e) {
+            Log.e("try","catched");
+            e.printStackTrace();
+            return;
+        }
     }
 //    public static int newClass(Activity activity){
 //        Log.d("TT","in new class");
@@ -282,7 +285,7 @@ private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
     public static int checkPermission(UsbManager m_usbManager){
         boolean permissionCheck = m_usbManager.hasPermission(camdev);
         Log.d("permissionCheck = ", permissionCheck?"yes":"no");
-        openDevice(camdev);
+        if(permissionCheck) openDevice(m_usbManager,camdev);
         return permissionCheck?fd:0;
     }
     public static int checkDevices(UsbManager m_usbManager, int vid, int pid)

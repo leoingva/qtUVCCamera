@@ -166,13 +166,13 @@ uvc_error_t uvc_start(){
 //      puts("UVC exited");
 }
 void openUVC(int fd){
+    uvc_get_device_with_fd(ctx,&dev,0,0,0,fd,0,0);
     /* Try to open the device: requires exclusive access */
-//    res = uvc_open(dev, &devh);
+    res = uvc_open(dev, &devh);
 
 //    if (res < 0) {
 //      uvc_perror(res, "uvc_open"); /* unable to open device */
 //    } else {
-    &devh = (uvc_device_handle_t*)fd;
 
       puts("Device opened");
       /* Print out a message containing all the information that libuvc
