@@ -27,8 +27,8 @@ const static char* MY_JAVA_CLASS = "GetPermission";
 int test(const QString &appPackageName) {
         QAndroidJniObject jsText = QAndroidJniObject::fromString(appPackageName);
         return QAndroidJniObject::callStaticMethod<jint>(MY_JAVA_CLASS,
-                                           "installApp",
-                                           "(Ljava/lang/String;)I",
+                                           "testfunc",
+                                           "()I",
                                            jsText.object<jstring>());
 }
 int checkPermission(){
@@ -54,7 +54,7 @@ int  getPermission(int vid, int pid) {
         QAndroidJniObject serviceName = QAndroidJniObject::getStaticObjectField<jstring>("android/content/Context","USB_SERVICE");
         QAndroidJniObject usbManager = activity.callObjectMethod("getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;", serviceName.object<jobject>());
 
-        ret = QAndroidJniObject::callStaticMethod<jint>(MY_JAVA_CLASS, "checkDevices",
+        ret = QAndroidJniObject::callStaticMethod<jint>(MY_JAVA_CLASS, "findDevice",
                                                   "(Landroid/hardware/usb/UsbManager;II)I",
                                                     usbManager.object<jobject>(),vid,pid);
 //        if ( usbManager.isValid() ){
@@ -112,16 +112,9 @@ w->update();
 
   uvc_free_frame(rgb);
 }
-void delay()
-{
-    QTime dieTime= QTime::currentTime().addSecs(1);
-    while (QTime::currentTime() < dieTime)
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-}
+
 uvc_device_t *dev;
-uvc_device_handle_t *devh;
 uvc_context_t *ctx;
-uvc_stream_ctrl_t ctrl;
 uvc_error_t res;
 
 uvc_error_t uvc_start(){
@@ -166,6 +159,9 @@ uvc_error_t uvc_start(){
 //      puts("UVC exited");
 }
 void openUVC(int fd){
+    uvc_device_handle_t *devh;
+    uvc_stream_ctrl_t ctrl;
+
     uvc_get_device_with_fd(ctx,&dev,0,0,0,fd,0,0);
     /* Try to open the device: requires exclusive access */
     res = uvc_open(dev, &devh);
