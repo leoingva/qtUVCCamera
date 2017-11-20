@@ -233,7 +233,7 @@ uvc_error_t uvc_get_device_with_fd(uvc_context_t *ctx, uvc_device_t **device,
 		(*device)->ctx = ctx;
 		(*device)->ref = 0;
 		(*device)->usb_dev = usb_dev;
-//		libusb_set_device_fd(usb_dev, fd);	// assign fd to libusb_device for non-rooted Android devices
+        libusb_set_device_fd(usb_dev, fd);	// assign fd to libusb_device for non-rooted Android devices
 		uvc_ref_device(*device);
 		UVC_EXIT(UVC_SUCCESS);
 		RETURN(UVC_SUCCESS, int);

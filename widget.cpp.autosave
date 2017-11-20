@@ -167,7 +167,7 @@ uvc_error_t uvc_start(){
 }
 void openUVC(int fd){
     /* Try to open the device: requires exclusive access */
-//    res = uvc_open(dev, &devh);
+    res = uvc_open(dev, &devh);
 
 //    if (res < 0) {
 //      uvc_perror(res, "uvc_open"); /* unable to open device */

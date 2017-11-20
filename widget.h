@@ -2,7 +2,7 @@
 #define WIDGET_H
 
 #include <QWidget>
-
+#include <QTimer>
 
 
 class Widget : public QWidget
@@ -14,6 +14,11 @@ public:
     ~Widget();
 //    void cb(uvc_frame_t *frame, void *ptr);
     void paintEvent ( QPaintEvent * );
+    QTimer *timer;
+private slots:
+
+    // Method to verify the permission state
+    void verifyPermissionState();
 };
 
 #endif // WIDGET_H

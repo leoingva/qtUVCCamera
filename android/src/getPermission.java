@@ -26,6 +26,15 @@ import 	android.content.BroadcastReceiver;
 import 	android.os.Handler;
 import java.util.Iterator;
 import 	android.os.Looper;
+import android.app.FragmentManager;
+import android.app.Fragment;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.app.FragmentTransaction;
+import android.os.Build;
+import android.os.Bundle;
+//import android.support.v4.content.ContextCompat;
+//import android.support.v4.app.ActivityCompat;
 
 public class GetPermission extends QtActivity
 {
@@ -37,10 +46,11 @@ public class GetPermission extends QtActivity
     private static UsbManager m_usbManager;
     private static UsbDeviceConnection connection;
 //    private static HashMap<Integer, Integer> connectedDevices;
-private static HashMap<String, Integer> deviceCache = new HashMap<String, Integer>();
-private static int fd = 0;
-private static boolean res = false;
-private static Activity mActivityInstance;
+    private static HashMap<String, Integer> deviceCache = new HashMap<String, Integer>();
+    private static int fd = 0;
+    private static boolean res = false;
+    private static Activity mActivityInstance;
+    private static UsbDevice camdev = null;
 
     public GetPermission()
     {
@@ -201,7 +211,7 @@ private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
     {
         Log.d("TAG","in open device");
     //    try {
-            if (!res) return;
+//            if (!res) return;
             UsbDeviceConnection devConn = m_usbManager.openDevice(device);
             fd = devConn.getFileDescriptor();
             Log.d("TAG","fd = " + fd);
@@ -213,84 +223,113 @@ private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
     //            return;
     //    }
     }
-    public static int newClass(Activity activity){
-        Log.d("TT","in new class");
-        Log.d("ACTIVITY",activity.toString());
-        Looper.prepare();
-       GetPermission m_instance1 = new GetPermission();
-       m_instance = m_instance1;
-       mActivityInstance = activity;
-       //Looper.loop();
-       Log.d("TT","out new class");
-       return 1;
-    }
+//    public static int newClass(Activity activity){
+//        Log.d("TT","in new class");
+//        Log.d("ACTIVITY",activity.toString());
+//        Looper.prepare();
+//       GetPermission m_instance1 = new GetPermission();
+//       m_instance = m_instance1;
+//       mActivityInstance = activity;
+//       //Looper.loop();
+//       Log.d("TT","out new class");
+//       return 1;
+//    }
 
-    static public int checkForDevices(int vid, int pid)
-    {
-//        if (deviceCache.containsKey(devPath)) {
-//            int fd = deviceCache.get(devPath);
+//    static public int checkForDevices(int vid, int pid)
+//    {
+////        if (deviceCache.containsKey(devPath)) {
+////            int fd = deviceCache.get(devPath);
+////            return fd;
+////        }
+
+
+//        Log.d(TAG, "in checkForDevices" + fd);
+//        Activity mother = QtNative.activity();
+//       Intent intent = new Intent(mother, GetPermission.class);
+
+//       Log.d(TAG, "after new Intent");
+//        Log.d(TAG, intent.toString());
+//        Log.d(TAG, mother.toString());
+//        Log.d(TAG, GetPermission.class.getName());
+//       mother.startActivity(intent);
+
+//        Log.d(TAG, "in checkForDevices" + fd);
+
+//        if(fd > 0)
 //            return fd;
+////        deviceCache.put(devPath, -1);
+
+//        Log.d(TAG, "before get device list");
+//        HashMap<String, UsbDevice> deviceList = m_usbManager.getDeviceList();
+//        Log.d(TAG, "after get device list");
+//        Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
+
+////        Looper.loop();
+//        while(deviceIterator.hasNext())
+//        {
+//            UsbDevice device = deviceIterator.next();
+
+//            if (device.getVendorId()== vid && device.getProductId()== pid)
+//            {
+//                Log.d(TAG, "Found a device: " + device);
+//                res = false;
+//                m_usbManager.requestPermission(device, mPermissionIntent);
+//                return 0;
+//            }
 //        }
+//        return -1;
+//    }
+    public static int checkPermission(UsbManager m_usbManager){
+        boolean permissionCheck = m_usbManager.hasPermission(camdev);
+        Log.d("permissionCheck = ", permissionCheck?"yes":"no");
+        openDevice(camdev);
+        return permissionCheck?fd:0;
+    }
+    public static int checkDevices(UsbManager m_usbManager, int vid, int pid)
+    {
+        Log.d("TRACE", "in checkDevices");
+        Activity currentActivity = QtNative.activity();
+        Log.d("currentActivity", currentActivity.toString());
 
-
-        Log.d(TAG, "in checkForDevices" + fd);
-        Activity mother = QtNative.activity();
-       Intent intent = new Intent(mother, GetPermission.class);
-
-       Log.d(TAG, "after new Intent");
-        Log.d(TAG, intent.toString());
-        Log.d(TAG, mother.toString());
-        Log.d(TAG, GetPermission.class.getName());
-       mother.startActivity(intent);
-
-        Log.d(TAG, "in checkForDevices" + fd);
-
-        if(fd > 0)
-            return fd;
-//        deviceCache.put(devPath, -1);
-
-        Log.d(TAG, "before get device list");
         HashMap<String, UsbDevice> deviceList = m_usbManager.getDeviceList();
-        Log.d(TAG, "after get device list");
         Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
-
-//        Looper.loop();
+//        PendingIntent mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
         while(deviceIterator.hasNext())
         {
             UsbDevice device = deviceIterator.next();
-
-            if (device.getVendorId()== vid && device.getProductId()== pid)
+            if (device.getVendorId()== 1133 && device.getProductId()== 2093)
             {
-                Log.d(TAG, "Found a device: " + device);
-                res = false;
+                Log.e("TRACE", "Found a device: " + device.getDeviceName());
+                camdev = device;
                 m_usbManager.requestPermission(device, mPermissionIntent);
-                return 0;
+                break;
             }
         }
-        return -1;
+        if(camdev == null){
+            return 0;
+        }
+//        Looper.prepare();
+//        final FragmentManager fragmentManager = currentActivity.getFragmentManager();
+//        final Fragment request = new Fragment() {
+//            void Fragment(){
+//                Log.wtf("AA","in constractor");
+//            }
+
+//            @Override public void onStart()
+//            {
+//                Log.wtf("AA","in onstart");
+//                super.onStart();
+//                Log.wtf("AA","in onstart");
+//            }
+
+//        };
+
+
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.add(0, request).commit();
+//        Log.wtf("TRACE",request.toString());
+        return 1;
     }
-//public static int checkDevices(UsbManager m_usbManager, Context context )
-//{
-//     Log.d("TAG", "in checkDevices");
-
-//    HashMap<String, UsbDevice> deviceList = m_usbManager.getDeviceList();
-//    Iterator<UsbDevice> deviceIterator = deviceList.values().iterator();
-//    PendingIntent mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
-//    while(deviceIterator.hasNext())
-//    {
-
-//        UsbDevice device = deviceIterator.next();
-////        Log.d("TAG", "in while cur device: " + device);
-
-//        if (device.getVendorId()== 1133 && device.getProductId()== 2093)
-//        {
-//            Log.d("TAG", "Found a device: " + device);
-//            m_usbManager.requestPermission(device, mPermissionIntent);
-//            return 1;
-//        }
-//    }
-//    return 0;
-//}
 //}
 
 //public class GetPermission
