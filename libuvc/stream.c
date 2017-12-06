@@ -403,7 +403,7 @@ static uvc_error_t _prepare_stream_ctrl(uvc_device_handle_t *devh, uvc_stream_ct
 #endif
 	return result;
 }
-
+int maxAvailableWidth, maxAvailableHeight;
 static uvc_error_t _uvc_get_stream_ctrl_format(uvc_device_handle_t *devh,
 	uvc_streaming_interface_t *stream_if, uvc_stream_ctrl_t *ctrl, uvc_format_desc_t *format,
 	const int width, const int height,
@@ -457,6 +457,10 @@ static uvc_error_t _uvc_get_stream_ctrl_format(uvc_device_handle_t *devh,
 #endif
 	DL_FOREACH(format->frame_descs, frame)
 	{
+        if (frame->wWidth > width)
+            break;
+        maxAvailableWidth = frame->wWidth;
+        maxAvailableHeight = frame->wHeight;
 		if (frame->wWidth != width || frame->wHeight != height)
 			continue;
 
@@ -519,7 +523,7 @@ found:
 uvc_error_t uvc_get_stream_ctrl_format_size(uvc_device_handle_t *devh,
 		uvc_stream_ctrl_t *ctrl, enum uvc_frame_format cf, int width, int height, int fps) {
 
-	return uvc_get_stream_ctrl_format_size_fps(devh, ctrl, cf, width, height, fps, fps);
+    return uvc_get_stream_ctrl_format_size_fps(devh, ctrl, cf, width, height, 1, fps);
 }
 
 /** Get a negotiated streaming control block for some common parameters.

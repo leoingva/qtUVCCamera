@@ -1,4 +1,4 @@
-#include "widget.h"
+#include "UVC.h"
 #include <QApplication>
 
 
@@ -11,8 +11,8 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Widget w;
-    w.show();
+    UVCPlayer w;
+    w.showFullScreen();
 
     return a.exec();
 }
